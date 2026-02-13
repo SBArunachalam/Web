@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4 Years of Love ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            position: relative;
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            z-index: 10;
+            animation: fadeIn 2s ease-in;
+        }
+
+        .title h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .title p {
+            font-size: 1.5em;
+            opacity: 0.9;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .angel {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
+        }
+
+        .angel:hover {
+            transform: scale(1.2);
+        }
+
+        .angel svg {
+            width: 60px;
+            height: 60px;
+        }
+
+        .wish-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            max-width: 500px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .wish-popup.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .wish-popup h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .wish-popup p {
+            color: #333;
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .wish-popup button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .wish-popup button:hover {
+            transform: scale(1.05);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .heart {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 20px;
+            animation: float-up 6s infinite;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .counter {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 1.2em;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .title h1 {
+                font-size: 2.5em;
+            }
+            .title p {
+                font-size: 1.2em;
+            }
+            .wish-popup {
+                max-width: 90%;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="hearts" id="hearts"></div>
+
+    <div class="title">
+        <h1>4 Years of Love</h1>
+        <p>Click the angels to reveal our wishes ✨</p>
+    </div>
+
+    <div class="counter">
+        <div id="wishes-found">Angels Found: 0/12</div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="wish-popup" id="wishPopup">
+        <h2 id="wishTitle">Wish</h2>
+        <p id="wishText"></p>
+        <button onclick="closeWish()">Close</button>
+    </div>
+
+    <script>
+        // Create stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Create floating hearts
+        const heartsContainer = document.getElementById('hearts');
+        setInterval(() => {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            heartsContainer.appendChild(heart);
+            setTimeout(() => heart.remove(), 7000);
+        }, 2000);
+
+        // Wishes for 4 years together
+        const wishes = [
+            "Thank you for 4 amazing years of laughter, love, and endless memories. You are my everything.",
+            "Every day with you feels like a beautiful dream. Here's to many more years of love and happiness together.",
+            "You've made these 4 years the best of my life. I fall in love with you more each day.",
+            "Through every high and low, you've been my rock. I'm so grateful for your love and support.",
+            "Four years ago, I found my soulmate. Today, I'm still amazed by how lucky I am to have you.",
+            "You bring light to my darkest days and joy to my happiest moments. I love you more than words can say.",
+            "Thank you for being patient, kind, and loving. You make me want to be a better person every day.",
+            "Our journey together has been incredible. I can't wait to see what adventures await us in the years to come.",
+            "You're not just my girlfriend, you're my best friend, my confidant, and my greatest love.",
+            "Four years down, forever to go. I promise to love you more with each passing day.",
+            "You've filled my life with love, laughter, and beautiful moments. Thank you for being you.",
+            "Here's to 4 years of us, and to all the beautiful tomorrows we'll share together. I love you endlessly."
+        ];
+
+        let foundWishes = 0;
+        const usedWishes = new Set();
+
+        // Angel SVG
+        const angelSVG = `
+            <svg viewBox="0 0 100 100" fill="white">
+                <circle cx="50" cy="30" r="12" />
+                <ellipse cx="50" cy="55" rx="15" ry="20" />
+                <path d="M 35 25 Q 20 15 15 30 Q 15 40 35 35" />
+                <path d="M 65 25 Q 80 15 85 30 Q 85 40 65 35" />
+                <circle cx="46" cy="28" r="2" fill="#667eea" />
+                <circle cx="54" cy="28" r="2" fill="#667eea" />
+                <path d="M 45 33 Q 50 35 55 33" stroke="#667eea" stroke-width="1.5" fill="none" />
+                <circle cx="50" cy="20" r="8" fill="gold" opacity="0.7" />
+            </svg>
+        `;
+
+        // Create angels
+        function createAngel(index) {
+            const angel = document.createElement('div');
+            angel.className = 'angel';
+            angel.innerHTML = angelSVG;
+            
+            // Random position
+            const x = Math.random() * (window.innerWidth - 100) + 50;
+            const y = Math.random() * (window.innerHeight - 100) + 50;
+            angel.style.left = x + 'px';
+            angel.style.top = y + 'px';
+
+            // Float animation
+            const duration = Math.random() * 10 + 15;
+            const delay = Math.random() * 5;
+            angel.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+
+            angel.onclick = () => showWish();
+            document.body.appendChild(angel);
+        }
+
+        // Float animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0px) translateX(0px); }
+                25% { transform: translateY(-20px) translateX(10px); }
+                50% { transform: translateY(0px) translateX(-10px); }
+                75% { transform: translateY(20px) translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Create 12 angels
+        for (let i = 0; i < 12; i++) {
+            createAngel(i);
+        }
+
+        function showWish() {
+            let wishIndex;
+            do {
+                wishIndex = Math.floor(Math.random() * wishes.length);
+            } while (usedWishes.has(wishIndex) && usedWishes.size < wishes.length);
+
+            if (usedWishes.size < wishes.length) {
+                usedWishes.add(wishIndex);
+                foundWishes++;
+                document.getElementById('wishes-found').textContent = `Angels Found: ${foundWishes}/12`;
+            }
+
+            document.getElementById('wishTitle').textContent = `Wish ${foundWishes}`;
+            document.getElementById('wishText').textContent = wishes[wishIndex];
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('wishPopup').classList.add('active');
+        }
+
+        function closeWish() {
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('wishPopup').classList.remove('active');
+        }
+
+        document.getElementById('overlay').onclick = closeWish;
+    </script>
+</body>
+</html>
